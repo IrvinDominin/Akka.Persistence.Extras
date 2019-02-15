@@ -13,9 +13,9 @@ PS> Install-Package Akka.Persistence.Extras
 
 The [`AtLeastOnceDeliveryActor` base type](https://getakka.net/api/Akka.Persistence.AtLeastOnceDeliveryActor.html) in its current form is a total non-pleasure to use in production, for the following reasons:
 
-1. Messages that are queued for reliable delivery via the `Deliver` method aren't automatically persisted, therefore the actor can't fulfill its delviery guarantees unless the user manually writes code for saving the `AtLeastOnceDeliverySnapshot` objects;
+1. Messages that are queued for reliable delivery via the `Deliver` method aren't automatically persisted, therefore the actor can't fulfill its delivery guarantees unless the user manually writes code for saving the `AtLeastOnceDeliverySnapshot` objects;
 2. It's not clear when or how often an `AtLeastOnceDeliverySnapshot` should be saved - there are no clear guidelines for this and actors with a large number of outstanding messages for delivery can pay massive performance penalties, having to save their entire delivery state at once all the time for each incremental change;
-3. Saving the `AtLeastOnceDeliverySnapshot` object requires either continuously rewriting one snapshot object without updating its sequence number (bad practice) or some awkard combination with using the normal `Persist` methods BUT without those `Persist` methods doing anything that can interfere with the contiguous state of the delivery snapshot - TL;DR; `Persist` can only really be used for things not directly related to delivery state;
+3. Saving the `AtLeastOnceDeliverySnapshot` object requires either continuously rewriting one snapshot object without updating its sequence number (bad practice) or some awkard combination with using the normal `Persist` methods, BUT without those `Persist` methods doing anything that can interfere with the contiguous state of the delivery snapshot - TL;DR; `Persist` can only really be used for things not directly related to delivery state;
 4. In general, this class requires the end user to memorize a significant amount of boilerplate when it comes to actually using it correctly.
 
 The goal of this project is to rewrite the `AtLeastOnceDeliveryActor` to do the following:
